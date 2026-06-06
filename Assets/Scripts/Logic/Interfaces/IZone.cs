@@ -2,6 +2,9 @@ using System.Collections.Generic;
 
 namespace SSR.Logic
 {
+    /// <summary>
+    /// Represents a zone in the game, such as a player's hand, deck, or discard pile.
+    /// </summary>
     public interface IZone
     {
         ZoneType ZoneType { get; }

@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace SSR.Tests
 {
+    /// <summary>
+    /// Tests for the GameState class and related components to ensure they hold and manage game data correctly.
+    /// </summary>
     public class GameStateTests
     {
         [Test]
@@ -53,19 +56,17 @@ namespace SSR.Tests
         }
 
         [Test]
-        public void PlayerState_Zone_Slots_Initialise_Empty()
+        public void PlayerState_Zones_Initialise_Empty()
         {
             var player = new PlayerState();
 
-            Assert.AreEqual(3, player.IncantationZone.Length);
-            Assert.AreEqual(3, player.SorceryZone.Length);
-            Assert.AreEqual(-1, player.SpiritZoneCardID);
-
-            foreach (var slot in player.IncantationZone)
-                Assert.AreEqual(-1, slot);
-
-            foreach (var slot in player.SorceryZone)
-                Assert.AreEqual(-1, slot);
+            Assert.IsFalse(player.SpiritZone.HasSpirit);
+            Assert.AreEqual(0, player.IncantationZone.Count);
+            Assert.AreEqual(0, player.SorceryZone.Count);
+            Assert.AreEqual(0, player.Hand.Count);
+            Assert.AreEqual(0, player.DiscardPile.Count);
+            Assert.IsFalse(player.IncantationZone.IsFull);
+            Assert.IsFalse(player.SorceryZone.IsFull);
         }
     }
 }

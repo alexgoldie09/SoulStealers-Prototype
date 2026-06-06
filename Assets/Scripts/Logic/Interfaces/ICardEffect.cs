@@ -1,5 +1,8 @@
 namespace SSR.Logic
 {
+    /// <summary>
+    /// Represents an effect that can be applied to the game state, such as damage, healing, or card draw.
+    /// </summary>
     public interface ICardEffect
     {
         EffectType EffectType { get; }
