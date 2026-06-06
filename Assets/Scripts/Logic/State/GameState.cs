@@ -40,8 +40,6 @@ namespace SSR.Logic
     public class PlayerState
     {
         public int PlayerID;
-        public int OwnerID;
-        public int ControllerID;
         public int Souls;
         public int ActionsRemaining;
         public bool IsEasyMode;

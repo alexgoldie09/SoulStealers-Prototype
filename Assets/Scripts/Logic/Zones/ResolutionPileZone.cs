@@ -1,3 +1,5 @@
+using System;
+
 namespace SSR.Logic
 {
     /// <summary>
@@ -6,6 +8,7 @@ namespace SSR.Logic
     /// Activated and Triggered effects are independent objects on this pile,
     /// separate from their source card. Rule 405.3.
     /// </summary>
+    [Serializable]
     public class ResolutionPileZone : ZoneBase
     {
         public ResolutionPileZone()

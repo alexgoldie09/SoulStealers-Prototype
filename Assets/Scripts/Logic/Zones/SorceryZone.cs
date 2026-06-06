@@ -1,3 +1,5 @@
+using System;
+
 namespace SSR.Logic
 {
     /// <summary>
@@ -5,6 +7,7 @@ namespace SSR.Logic
     /// A player cannot Secret Play if this zone is already at capacity. Rule 601.4.
     /// The identity of face-down cards is hidden; their count is public. Rule 400.2.
     /// </summary>
+    [Serializable]
     public class SorceryZone : ZoneBase
     {
         public const int Capacity = 3;

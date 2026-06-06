@@ -1,3 +1,5 @@
+using System;
+
 namespace SSR.Logic
 {
     /// <summary>
@@ -7,6 +9,7 @@ namespace SSR.Logic
     /// resolution time (rule 404).
     /// Merged cards do not occupy an additional slot (rule 805).
     /// </summary>
+    [Serializable]
     public class IncantationZone : ZoneBase
     {
         public const int Capacity = 3;

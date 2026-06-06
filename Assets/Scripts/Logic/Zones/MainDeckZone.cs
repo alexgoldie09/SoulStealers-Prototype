@@ -1,9 +1,12 @@
+using System;
+
 namespace SSR.Logic
 {
     /// <summary>
     /// The Main Deck. Face-down, insertion-order preserved.
     /// Any player may count it but not examine it. Rule 402.
     /// </summary>
+    [Serializable]
     public class MainDeckZone : ZoneBase
     {
         public MainDeckZone()

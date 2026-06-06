@@ -1,3 +1,5 @@
+using System;
+
 namespace SSR.Logic
 {
     /// <summary>
@@ -5,6 +7,7 @@ namespace SSR.Logic
     /// Exactly one Spirit at a time. Rule 404 Field Layout.
     /// Spirit cards cannot be moved to non-Spirit zones by effects. Rule 301.3.
     /// </summary>
+    [Serializable]
     public class SpiritZone : ZoneBase
     {
         private const int Capacity = 1;
