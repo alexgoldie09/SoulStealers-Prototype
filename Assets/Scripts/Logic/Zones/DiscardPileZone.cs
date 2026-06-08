@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace SSR.Logic
@@ -8,6 +9,7 @@ namespace SSR.Logic
     /// the owner to choose order — handled externally via AddMultiple.
     /// Rule 404 (Discard Pile section).
     /// </summary>
+    [Serializable]
     public class DiscardPileZone : ZoneBase
     {
         public DiscardPileZone()
@@ -36,7 +38,7 @@ namespace SSR.Logic
         /// </summary>
         public void AddMultiple(IEnumerable<int> cardIDsInChosenOrder)
         {
-            foreach (int id in cardIDsInChosenOrder)
+            foreach (var id in cardIDsInChosenOrder)
                 _cardIDs.Insert(0, id);
         }
 
@@ -53,8 +55,10 @@ namespace SSR.Logic
         /// </summary>
         public int TakeFromTop()
         {
-            if (_cardIDs.Count == 0) return -1;
-            int top = _cardIDs[0];
+            if (_cardIDs.Count == 0) 
+                return -1;
+            
+            var top = _cardIDs[0];
             _cardIDs.RemoveAt(0);
             return top;
         }

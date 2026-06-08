@@ -12,6 +12,9 @@ namespace SSR.Logic
     [Serializable]
     public class SideGameZone
     {
+        public ZoneType ZoneType => ZoneType.SideGame;
+        public bool IsPublic => true;
+
         public MainDeckZone SpiritDeck = new MainDeckZone();
         public DiscardPileZone SpiritDiscardPile = new DiscardPileZone();
         public List<int> NamaraWordIDs = new List<int>();

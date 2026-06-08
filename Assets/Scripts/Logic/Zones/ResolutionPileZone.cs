@@ -31,8 +31,10 @@ namespace SSR.Logic
         /// </summary>
         public int Pop()
         {
-            if (_cardIDs.Count == 0) return -1;
-            int top = _cardIDs[0];
+            if (_cardIDs.Count == 0) 
+                return -1;
+            
+            var top = _cardIDs[0];
             _cardIDs.RemoveAt(0);
             return top;
         }

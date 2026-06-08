@@ -170,7 +170,9 @@ namespace SSR.Logic
     }
 
     /// <summary>
-    /// Defines the different types of plays that can be made during the Action Phase, which can affect how cards are played and how effects resolve.
+    /// Defines the different types of plays that can be made during the
+    /// Action Phase. Reveal is turning a face-down Spell face-up as an
+    /// action. Rule 602.3, 600.1.
     /// </summary>
     public enum PlayType
     {
@@ -178,6 +180,7 @@ namespace SSR.Logic
         SecretPlay,
         MergePlay,
         SpecialPlay,
-        Put
+        Put,
+        Reveal
     }
 }

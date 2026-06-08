@@ -17,11 +17,11 @@ namespace SSR.Logic
         /// <typeparam name="T"></typeparam>
         public static void Shuffle<T>(this IList<T> list)
         {
-            int n = list.Count;
+            var n = list.Count;
             while (n > 1)
             {
                 n--;
-                int k = _rng.Next(n + 1);
+                var k = _rng.Next(n + 1);
                 (list[k], list[n]) = (list[n], list[k]);
             }
         }
