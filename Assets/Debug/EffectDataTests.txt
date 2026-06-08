@@ -1,0 +1,88 @@
+=== EffectDataTests Run: 2026-06-09 00:15:12 ===
+
+--- BanishEffectData_HasCorrectType ---
+  BanishEffectData — type=Banish  value=2  targetPlayer=2
+
+--- ConspiracyEffectData_HasCorrectType ---
+  ConspiracyEffectData — type=Conspiracy
+
+--- CopyEffectData_DefaultIsPermanent ---
+  CopyEffectData — type=Copy  duration=Permanent  targetCard=33
+
+--- CounterEffectData_DefaultIsAddition ---
+  CounterEffectData — type=Counter  count=2  isAddition=True  targetCard=10
+
+--- DefenseEffectData_HasCorrectType ---
+  DefenseEffectData — type=Defense  value=2
+
+--- DestroyEffectData_HasCorrectType ---
+  DestroyEffectData — type=Destroy  typeRestriction=Ritual  targetCard=77
+
+--- DiscardEffectData_DefaultSourceZoneIsHand ---
+  DiscardEffectData — type=Discard  sourceZone=Hand  targetPlayer=-1
+
+--- EffectData_LinkedChain_DefaultIsMinusOne ---
+  Linked chain default — linkedToPreceding=-1  dependency=Unlinked
+
+--- EffectData_LinkedChain_SetCorrectly ---
+  Linked effect — printedIndex=1  linkedTo=0  dependency=Linked
+
+--- EffectData_ORChoice_GroupedCorrectly ---
+  OR choice group 0 —
+    Option A: Banish value=2  choiceIndex=0
+    Option B: Steal value=1  choiceIndex=1
+
+--- EffectData_RevealEffect_FlaggedCorrectly ---
+  Reveal effect — isReveal=True  printedIndex=0
+
+--- EffectData_StatusDefaultsToActive ---
+  Default status — status=Active
+
+--- EffectData_TargetIDs_EmptyByDefault ---
+  Default targets — count=0  targetPlayer=-1
+
+--- GiveSoulsEffectData_Imposed_HasCorrectType ---
+  GiveSoulsEffectData — type=GiveSouls  imposed=True  targetPlayer=2
+
+--- IgnoreEffectData_HasCorrectType ---
+  IgnoreEffectData — type=Ignore  ignoresDefense=True  ignoresSecrets=True  ignoredTypes=1
+
+--- IndestructibleEffectData_DefaultIsPermanent ---
+  IndestructibleEffectData — type=Indestructible  duration=Permanent  targetCard=-1
+
+--- MergeEffectData_HasCorrectType ---
+  MergeEffectData — type=Merge  sourceType=Ritual  targetIncantation=55
+
+--- ModifierEffectData_Global_AppliestoAll ---
+  Uzilda-style modifier — type=Modifier  value=-2  global=True  targetEffects=2
+
+--- ModifierEffectData_Positive_HasCorrectType ---
+  ModifierEffectData — type=Modifier  value=+2  targets=Banish  controllerOnly=True
+
+--- NegateEffectData_DefaultTargetsCard ---
+  NegateEffectData — type=Negate  targetsCard=True  typeRestriction=none  targetOnPile=99
+
+--- NumericEffect_SymbolicValue_UsesBaseValue ---
+  Symbolic effect — baseValue=4  effectiveBase=4
+
+--- NumericEffect_WordFormValue_UsesBaseValue ---
+  WordForm effect — baseValue=2  effectiveBase=2
+
+--- NumericEffect_XValue_UsedWhenValueTypeIsX ---
+  X-value effect — baseValue=0  xValue=5  effectiveBase=5
+
+--- PactEffectData_HasCorrectType ---
+  PactEffectData — type=Pact  requiredSpirit=Liria
+
+--- RecallEffectData_HasCorrectType ---
+  RecallEffectData — type=Recall  count=2  fromTop=True  sourceZone=DiscardPile  targetPlayer=1
+
+--- SilenceEffectData_DefaultDurationIsUntilNextTurn ---
+  SilenceEffectData — type=Silence  duration=UntilNextTurn  targetCard=42  maxTargets=1
+
+--- SpecialPlayEffectData_HasCorrectType ---
+  SpecialPlayEffectData — type=SpecialPlay  allowedType=Spell  outsideActionPhase=True
+
+--- StealEffectData_HasCorrectType ---
+  StealEffectData — type=Steal  value=3  effectiveBase=3  targetPlayer=2
+
