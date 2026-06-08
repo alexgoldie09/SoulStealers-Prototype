@@ -21,9 +21,8 @@ namespace SSR.Logic
         public static event Action<int, int> OnSpiritSelected;     // playerID, spiritID
         public static event Action<int, int> OnSpiritAutoAssigned; // playerID, spiritID
         public static event Action OnPoolCycleReset;
-
-        // ── Dealing ───────────────────────────────────────────────
-
+        
+        #region Dealing
         /// <summary>
         /// Shuffles the available pool and deals the correct number of
         /// spirit cards to each player's DealtSpiritIDs list.
@@ -57,9 +56,9 @@ namespace SSR.Logic
             // Remove dealt cards from the available pool
             pool.AvailablePool.RemoveRange(0, poolIndex);
         }
+        #endregion
 
-        // ── Selection ─────────────────────────────────────────────
-
+        #region Selection
         /// <summary>
         /// Attempts to select a spirit for a player. Returns true if
         /// the selection is valid (spiritID is in the player's dealt
@@ -109,9 +108,9 @@ namespace SSR.Logic
             }
             return true;
         }
+        #endregion
 
-        // ── Reveal ────────────────────────────────────────────────
-
+        #region Reveal and Turn Order
         /// <summary>
         /// Returns unchosen spirits to the AvailablePool and clears
         /// each player's DealtSpiritIDs. Called immediately after
@@ -156,9 +155,9 @@ namespace SSR.Logic
                 order[i] = players[i].playerID;
             return order;
         }
+        #endregion
 
-        // ── End of Round ──────────────────────────────────────────
-
+        #region End of Round
         /// <summary>
         /// Moves each player's selected spirit to the UnavailablePool
         /// and clears SelectedSpiritID. If the pool is now empty,
@@ -182,5 +181,6 @@ namespace SSR.Logic
                 OnPoolCycleReset?.Invoke();
             }
         }
+        #endregion
     }
 }

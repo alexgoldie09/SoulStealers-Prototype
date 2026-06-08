@@ -6,6 +6,10 @@ namespace SSR.Logic
     /// </summary>
     public interface IIdentifiable
     {
+        /// <summary>
+        /// Gets the unique identifier for this object.
+        /// This ID should be assigned when the object is created and should never change.
+        /// </summary>
         int ID { get; }
     }
 }

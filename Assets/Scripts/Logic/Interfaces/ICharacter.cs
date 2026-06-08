@@ -5,7 +5,14 @@ namespace SSR.Logic
     /// </summary>
     public interface ICharacter : IIdentifiable
     {
+        /// <summary>
+        /// The number of souls the character currently has. When this reaches zero, the character dies.
+        /// </summary>
         int Souls { get; set; }
+        /// <summary>
+        /// Indicates whether the character is currently alive.
+        /// A character is considered alive if it has more than zero souls.
+        /// </summary>
         void Die();
     }
 }

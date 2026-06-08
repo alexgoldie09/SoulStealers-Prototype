@@ -11,10 +11,9 @@ namespace SSR.Logic
     /// </summary>
     public static class ActionSystem
     {
-        public const int Actionsperturn = 2;
+        public const int ActionsPerTurn = 2;
 
-        // ── Action Budget ─────────────────────────────────────────
-
+        #region Actions Budget
         /// <summary>
         /// Resets a player's action count to the full budget at the
         /// start of their Action Phase.
@@ -23,7 +22,7 @@ namespace SSR.Logic
         {
             var player = state.GetPlayer(playerID);
             if (player != null)
-                player.ActionsRemaining = Actionsperturn;
+                player.ActionsRemaining = ActionsPerTurn;
         }
 
         /// <summary>
@@ -49,9 +48,9 @@ namespace SSR.Logic
             if (player != null)
                 player.ActionsRemaining++;
         }
-
-        // ── Legality ──────────────────────────────────────────────
-
+        #endregion
+        
+        #region Legality
         /// <summary>
         /// Returns true if the given play type consumes one of the
         /// player's 2 actions. Rule 600.1.
@@ -153,5 +152,6 @@ namespace SSR.Logic
             if (player == null) return;
             player.HasRecycledThisActionPhase = false;
         }
+        #endregion
     }
 }

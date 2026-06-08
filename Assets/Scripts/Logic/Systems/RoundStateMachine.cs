@@ -19,7 +19,7 @@ namespace SSR.Logic
     ///
     /// Rule 500–506.
     /// </summary>
-    public class RoundStateMachine
+    public class RoundStateMachine: IDisposable
     {
         // ── Dependencies ──────────────────────────────────────────
         private readonly GameState _state;
@@ -73,18 +73,33 @@ namespace SSR.Logic
         public GamePhase CurrentPhase => _state.CurrentPhase;
         public TurnContext TurnContext => _turnContext;
         public bool IsRunning { get; private set; }
+        
+        // ── Private State ─────────────────────────────────────────
+        private readonly Action _onPoolCycleReset; // store the action to subscribe and unsubscribe
 
-        // ── Constructor ───────────────────────────────────────────
+        #region Constructor
         public RoundStateMachine(GameState state, Random rng = null)
         {
             _state = state;
             _turnContext = new TurnContext();
             _rng = rng ?? new Random();
-            SpiritPoolSystem.OnPoolCycleReset += () => OnPoolCycleReset?.Invoke();
+            _onPoolCycleReset = () => OnPoolCycleReset?.Invoke();
+            SpiritPoolSystem.OnPoolCycleReset += _onPoolCycleReset;
         }
+        #endregion
+        
+        #region IDisposable Implementation
+        /// <summary>
+        /// Unsubscribes from events to prevent memory leaks. Call when the state machine is no longer needed,
+        /// e.g. when exiting to main menu or shutting down the game.
+        /// </summary>
+        public void Dispose()
+        {
+            SpiritPoolSystem.OnPoolCycleReset -= _onPoolCycleReset;
+        }
+        #endregion
 
-        // ── External Drive ────────────────────────────────────────
-
+        #region Game Functions
         /// <summary>
         /// Begins the game from the first round. Call once after
         /// game setup is complete.
@@ -107,6 +122,21 @@ namespace SSR.Logic
             _selectionTimer -= deltaTime;
             if (_selectionTimer <= 0f)
                 HandleSelectionTimeout();
+        }
+        
+        /// <summary>
+        /// Handles the spirit selection timer expiring. Auto-assigns spirits for any players
+        /// who haven't selected and advances to RevealSpirits. Client rule: timer-based selection.
+        /// </summary>
+        private void HandleSelectionTimeout()
+        {
+            foreach (var player in _state.Players)
+            {
+                if (player == null) continue;
+                if (player.SelectedSpiritID == -1)
+                    SpiritPoolSystem.AutoAssignSpirit(_state, player.PlayerID, _rng);
+            }
+            TransitionTo(GamePhase.RevealSpirits);
         }
 
         /// <summary>
@@ -140,8 +170,9 @@ namespace SSR.Logic
             TransitionTo(GamePhase.EndOfTurn);
             return true;
         }
+        #endregion
 
-        // ── Phase Transitions ─────────────────────────────────────
+        #region Phase Transitions
         /// <summary>
         /// Transitions to the given phase, updates GameState, and fires
         /// the appropriate events.
@@ -168,6 +199,7 @@ namespace SSR.Logic
                     throw new ArgumentOutOfRangeException(nameof(phase), phase, null);
             }
         }
+        #endregion
 
         #region Phase Entry
         /// <summary>
@@ -295,22 +327,5 @@ namespace SSR.Logic
             TransitionTo(GamePhase.BeginRound);
         }
         #endregion
-
-        // ── Timer ─────────────────────────────────────────────────
-
-        /// <summary>
-        /// Handles the spirit selection timer expiring. Auto-assigns spirits for any players
-        /// who haven't selected and advances to RevealSpirits. Client rule: timer-based selection.
-        /// </summary>
-        private void HandleSelectionTimeout()
-        {
-            foreach (var player in _state.Players)
-            {
-                if (player == null) continue;
-                if (player.SelectedSpiritID == -1)
-                    SpiritPoolSystem.AutoAssignSpirit(_state, player.PlayerID, _rng);
-            }
-            TransitionTo(GamePhase.RevealSpirits);
-        }
     }
 }
