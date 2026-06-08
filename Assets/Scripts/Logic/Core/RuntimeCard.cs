@@ -92,8 +92,16 @@ namespace SSR.Logic
 
         // ── Play History ─────────────────────────────────────────
         public PlayType LastPlayType;
+        
+        // ── Effect List ───────────────────────────────────────────
+        // The EffectData objects for this card's printed effects.
+        // Populated by the visual/data layer (SSR.Data) when a card
+        // is created from its ScriptableObject asset.
+        // Read by the EffectResolver and subsystems (Defense calculator,
+        // Modifier calculator, Cannot rule checker). Rule 700.
+        public List<EffectData> Effects = new List<EffectData>();
 
-        // ── Constructor ───────────────────────────────────────────
+        #region Constructor
         public RuntimeCard(
             string cardDataID,
             int ownerID,
@@ -116,8 +124,23 @@ namespace SSR.Logic
             Location = CardLocation.MainDeck;
             FaceState = CardFaceState.FaceDown;
         }
+        #endregion
 
         #region Helpers
+        /// <summary>
+        /// Returns true if this card has an active IgnoreEffectData
+        /// with IgnoresDefense = true. Used by the resolver to bypass
+        /// DEFENSE on Steal/Banish effects. Rule 807.
+        /// </summary>
+        public bool HasIgnoreDefense()
+        {
+            foreach (var e in Effects)
+                if (e is IgnoreEffectData ignore && ignore.IgnoresDefense
+                                                 && e.Status != EffectStatus.Silenced)
+                    return true;
+            return false;
+        }
+        
         /// <summary>
         /// Returns true if this card is a face-down Sorcery in the Sorcery
         /// zone — either a true Secret or a Spell played face-down. Rule 304.5.

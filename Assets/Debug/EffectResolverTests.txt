@@ -1,0 +1,113 @@
+=== EffectResolverTests Run: 2026-06-09 02:45:19 ===
+
+--- ApplyModifiers_GlobalModifier_AppliesToAllPlayers ---
+  Base=4 global -2 → result=2  (expected 2)
+
+--- ApplyModifiers_WordFormNotModified ---
+  WordForm value=2 with +5 modifier → result=2  (unchanged)
+
+--- Banish_ReducedByDefense ---
+  After: P2=28  (expected 28 = 30 - (4-2))
+
+--- Banish_TargetLosesSouls_ControllerGainsNothing ---
+  Before: P1=30 P2=30
+  After:  P1=30 P2=26  result=Resolved
+
+--- CalculateTotalDefense_SilencedCardNotCounted ---
+  Total Defense for P2: 0  (silenced card not counted → 0)
+
+--- CalculateTotalDefense_SumsAcrossMultipleCards ---
+  Total Defense for P2: 3  (expected 3)
+
+--- Counter_AddsCorrectly ---
+  CounterCount before: 0
+  CounterCount after: 2  result=Resolved
+
+--- Counter_Fizzles_WhenTargetNotOnField ---
+  result=Fizzled  (expected: Fizzled)
+
+--- Counter_RemovesCorrectly ---
+  CounterCount after: 1  (expected 1)
+
+--- Destroy_Blocked_WhenTargetIsIndestructible ---
+  Target is Indestructible
+  result=Blocked  (expected: Blocked)  stillOnField=True
+
+--- Destroy_Blocked_WhenTargetIsSpirit ---
+  result=Blocked  (expected: Blocked — Spirits cannot be Destroyed)
+
+--- Destroy_Fizzles_WhenTargetLeavesField ---
+  Target card is in Hand, not on Field
+  result=Fizzled  (expected: Fizzled)
+
+--- Destroy_IndestructibleSilenced_CanBeDestroyed ---
+  Target is Indestructible but also Silenced → Indestructible lost
+  result=Resolved  (expected: Resolved)
+
+--- Destroy_MovesCardToOwnerDiscard ---
+  Ritual ID=1  location=IncantationZone
+  After: location=DiscardPile  inDiscard=True  result=Resolved
+
+--- Discard_MovesCardFromHandToDiscard ---
+  Card in Hand: Hand Card ID=1
+  After: location=DiscardPile  inDiscard=True  result=Resolved
+
+--- GiveSouls_IgnoresDefense ---
+  After: P1=27 P2=33
+
+--- GiveSouls_Imposed_ControllerLosesTargetGains ---
+  After: P1=28 P2=32
+
+--- GiveSouls_Inflicted_TargetLosesControllerGains ---
+  After: P1=32 P2=28
+
+--- Negate_ReturnsNotImplemented_UntilStackExists ---
+  result=NotImplemented  (expected: NotImplemented)
+
+--- Recall_Fizzles_WhenSourceZoneEmpty ---
+  P2 discard is empty
+  result=Fizzled  (expected: Fizzled)
+
+--- Recall_MovesCardFromDiscardToHand ---
+  P2 discard has 2 cards  recalling top 1
+  P2 Hand count=1  P2 Discard count=1  result=Resolved
+
+--- Silence_AppliesIsSilencedToTarget ---
+  Target IsSilenced before: False
+  Target IsSilenced after: True  result=Resolved
+
+--- Silence_Blocked_OnSpirit ---
+  result=Blocked  spirit IsSilenced=False
+
+--- Silence_RegistersActiveDuration ---
+  ActiveDurations count: 1  timing: UntilNextTurn
+
+--- Silence_RemovesIndestructible ---
+  IsIndestructible before: True
+  IsIndestructible after: False  IsSilenced: True
+
+--- Steal_ClampedToZeroWhenDefenseExceedsValue ---
+  Defense=5 vs Steal=3 → net should be 0
+  After: P1=30 P2=30  result=Resolved
+
+--- Steal_IgnoreDefense_BypassesAllDefense ---
+  Defense=3 but source Ignores Defense  Steal=3 → net=3
+  After: P1=33 P2=27  result=Resolved
+
+--- Steal_ModifierIncreasesValue ---
+  Modifier +2 on Steal  base=2 → expected net=4 (no defense)
+  After: P1=34 P2=26  result=Resolved
+
+--- Steal_MultipleDefenseEffectsCumulative ---
+  Two Defense 1 cards = total Defense 2  Steal=3 → net=1
+  After: P1=31 P2=29
+
+--- Steal_ReducedByDefense ---
+  Defense card added to P2 IncantationZone  defense=2
+  Before: P1=30 P2=30
+  After:  P1=31 P2=29  net=1  result=Resolved
+
+--- Steal_TransfersSouls_CorrectlyBothPlayers ---
+  Before: P1=30 P2=30
+  After:  P1=33 P2=27  result=Resolved
+

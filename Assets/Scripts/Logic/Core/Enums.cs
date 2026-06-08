@@ -183,4 +183,19 @@ namespace SSR.Logic
         Put,
         Reveal
     }
+    
+    /// <summary>
+    /// The outcome of attempting to resolve an EffectData object.
+    /// Resolved: effect executed and game state was modified.
+    /// Fizzled: effect failed passively — targets illegal, conditions unmet.
+    /// Blocked: a Cannot static effect actively prevented the event. Rule 103.2.
+    /// NotImplemented: stub — resolver case not yet written.
+    /// </summary>
+    public enum EffectResolutionResult
+    {
+        Resolved,
+        Fizzled,
+        Blocked,
+        NotImplemented
+    }
 }
