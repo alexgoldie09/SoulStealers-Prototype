@@ -1,4 +1,4 @@
-=== EffectResolverTests Run: 2026-06-09 02:45:19 ===
+=== EffectResolverTests Run: 2026-06-18 19:32:11 ===
 
 --- ApplyModifiers_GlobalModifier_AppliesToAllPlayers ---
   Base=4 global -2 → result=2  (expected 2)

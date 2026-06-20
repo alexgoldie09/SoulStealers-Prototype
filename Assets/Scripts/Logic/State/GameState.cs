@@ -31,6 +31,11 @@ namespace SSR.Logic
         // This is the single source of truth for card state during a game.
         public Dictionary<int, RuntimeCard> CardRegistry
             = new Dictionary<int, RuntimeCard>();
+        
+        // Registry of all PileObjects currently on the Resolution Pile, keyed by ID.
+        // Effect objects are distinct from cards on the pile. Rule 405.3.
+        public Dictionary<int, PileObject> PileObjectRegistry
+            = new Dictionary<int, PileObject>();
     }
 
     /// <summary>

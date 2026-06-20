@@ -1,0 +1,75 @@
+=== ResolutionStackTests Run: 2026-06-21 02:40:11 ===
+
+--- AfterResolution_IsPlayed_Cleared ---
+
+--- BothPass_PileEmpty_FiresOnPileEmpty ---
+
+--- BothPass_ResolvesTopCard ---
+
+--- Conspiracy_OpensWindow_BeforeEffectsResolve ---
+
+--- ConspiracyPut_PlacesSorceryFaceDown ---
+
+--- ConspiracyPut_WrongController_ReturnsFalse ---
+
+--- ConspiracySkip_ResumesResolution ---
+
+--- Dispose_NullsAllEvents ---
+AnyEventFired=False
+
+--- EffectObject_AfterResolution_RemovedFromRegistry ---
+StillRegistered=True
+
+--- Merge_AttachesToHost ---
+
+--- Merge_HostAtCapacity_Fizzles ---
+
+--- Merge_RitualTargetsOpponentHost_Fizzles ---
+
+--- Negate_CardOnPile_FiresOnCardNegated ---
+
+--- Negate_CardOnPile_MovesTargetToDiscard ---
+
+--- Negate_TargetNotOnPile_Fizzles ---
+
+--- Negate_TypeRestriction_WrongType_Fizzles ---
+
+--- PassPriority_WrongPlayer_ReturnsFalse ---
+
+--- PlaceCard_OpensPriorityWindow ---
+
+--- PlaceCard_SetsIsPlayedAndLocation ---
+
+--- PlaceEffectObject_RegisteredAndOnPile ---
+Registered=True, OnPile=True
+
+--- Prayer_AfterResolution_GoesToIncantationZone ---
+
+--- PriorityOrder_OpponentFirstThenActingPlayer ---
+
+--- RevealSecret_FaceDownSorcery_PlacesOnPile ---
+Placed=True, FaceState=FaceUp, Location=ResolutionPile
+
+--- RevealSecret_FaceUp_ReturnsFalse ---
+RevealSecret(already face-up)=False
+
+--- Ritual_AfterResolution_GoesToIncantationZone ---
+
+--- Ritual_IncantationZoneFull_GoesToDiscard ---
+
+--- Ritual_MergePlay_GoesToDiscard ---
+
+--- Ritual_Resolution_FiresOnCardEnteredField ---
+
+--- Secret_AfterResolution_GoesToDiscard ---
+
+--- SilencedCard_EffectsFizzle_CardStillResolves ---
+
+--- Spell_AfterResolution_GoesToDiscard ---
+
+--- Spell_Resolution_DoesNotFireOnCardEnteredField ---
+
+--- Spirit_AfterResolution_GoesToSpiritZone ---
+
+--- TwoCards_LIFO_TopResolvesFirst ---
+

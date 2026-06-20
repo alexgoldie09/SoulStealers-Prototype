@@ -69,12 +69,14 @@ namespace SSR.Logic
                 // Modifiers are evaluated inline by ApplyModifiers(); they do not
                 // independently enter the pile in the current card set.
                 EffectType.Modifier => EffectResolutionResult.Resolved,
+                
+                EffectType.Negate => ResolveNegate((NegateEffectData)effect, state),
+                EffectType.Merge => ResolveMerge((MergeEffectData)effect, state),
 
-                // Stubs — require the Resolution Stack (next chunk).
-                EffectType.Negate => EffectResolutionResult.NotImplemented,
-                EffectType.Conspiracy => EffectResolutionResult.NotImplemented,
+                // Conspiracy window is opened by ResolutionStack before effects run;
+                // if this branch is reached the effect is silenced or skipped.
+                EffectType.Conspiracy => EffectResolutionResult.Resolved,
                 EffectType.SpecialPlay => EffectResolutionResult.NotImplemented,
-                EffectType.Merge => EffectResolutionResult.NotImplemented,
                 EffectType.Copy => EffectResolutionResult.NotImplemented,
                 _ => EffectResolutionResult.NotImplemented
             };
@@ -220,12 +222,32 @@ namespace SSR.Logic
                     var player = state.GetPlayer(e.TargetPlayerID);
                     return player != null;
                 }
+                
+                case EffectType.Negate:
+                {
+                    var e = (NegateEffectData)effect;
+                    if (e.TargetOnPileID == -1) return false;
+                    if (e.TargetsCard)
+                    {
+                        var target = state.GetCard(e.TargetOnPileID);
+                        return target != null
+                               && target.Location == CardLocation.ResolutionPile;
+                    }
+                    return state.PileObjectRegistry.ContainsKey(e.TargetOnPileID);
+                }
 
-                // Static effects and pile effects have no targets to validate here.
+                case EffectType.Merge:
+                {
+                    var e = (MergeEffectData)effect;
+                    if (e.TargetIncantationID == -1) return false;
+                    var host = state.GetCard(e.TargetIncantationID);
+                    return host != null
+                           && host.Location == CardLocation.IncantationZone;
+                }
+
+                // Static effects and pile-window effects have no targets to validate here.
                 case EffectType.Defense:
                 case EffectType.Modifier:
-                case EffectType.Merge:
-                case EffectType.Negate:
                 case EffectType.Ignore:
                 case EffectType.Conspiracy:
                 case EffectType.SpecialPlay:
@@ -646,6 +668,81 @@ namespace SSR.Logic
                 target.CounterCount = Math.Max(0,
                     target.CounterCount - effect.BaseValue);
 
+            return EffectResolutionResult.Resolved;
+        }
+        #endregion
+        
+        #region Pile Effect Resolvers
+        /// <summary>
+        /// Resolves a Negate effect by removing the target card or effect object
+        /// from the Resolution Pile before it resolves.
+        /// Negated cards go to their owner's Discard; negated effect objects cease
+        /// to exist. Rule 806.
+        /// </summary>
+        private static EffectResolutionResult ResolveNegate(
+            NegateEffectData effect, GameState state)
+        {
+            var targetID = effect.TargetOnPileID;
+            if (targetID == -1) return EffectResolutionResult.Fizzled;
+
+            if (effect.TargetsCard)
+            {
+                var target = state.GetCard(targetID);
+                if (target == null || target.Location != CardLocation.ResolutionPile)
+                    return EffectResolutionResult.Fizzled;
+
+                // Type restriction: only cards of the specified type can be targeted. Rule 806.3.
+                if (effect.TypeRestriction.HasValue
+                    && target.CurrentType != effect.TypeRestriction.Value)
+                    return EffectResolutionResult.Fizzled;
+
+                ZoneMover.MoveCard(state, targetID, CardLocation.DiscardPile);
+                return EffectResolutionResult.Resolved;
+            }
+            else
+            {
+                if (!state.PileObjectRegistry.ContainsKey(targetID))
+                    return EffectResolutionResult.Fizzled;
+
+                if (!state.ResolutionPile.Contains(targetID))
+                    return EffectResolutionResult.Fizzled;
+
+                // Effect object ceases to exist — remove from pile and registry.
+                state.ResolutionPile.Remove(targetID);
+                state.PileObjectRegistry.Remove(targetID);
+                return EffectResolutionResult.Resolved;
+            }
+        }
+
+        /// <summary>
+        /// Resolves a Merge effect by attaching the source Incantation to a host
+        /// Incantation already on the Field. The merged card loses its type and name;
+        /// its effects are added to the host. Rule 805.
+        /// </summary>
+        private static EffectResolutionResult ResolveMerge(
+            MergeEffectData effect, GameState state)
+        {
+            var sourceCard = state.GetCard(effect.SourceCardID);
+            var host = state.GetCard(effect.TargetIncantationID);
+
+            if (sourceCard == null || host == null)
+                return EffectResolutionResult.Fizzled;
+
+            if (host.Location != CardLocation.IncantationZone)
+                return EffectResolutionResult.Fizzled;
+
+            // Maximum two attached cards per host. Rule 805.3.
+            if (host.AttachedCardIDs.Count >= 2)
+                return EffectResolutionResult.Fizzled;
+
+            // Ritual MERGE targets only cards under the controller's control. Rule 805.
+            if (effect.SourceCardType == CardType.Ritual
+                && host.ControllerID != sourceCard.ControllerID)
+                return EffectResolutionResult.Fizzled;
+
+            host.AttachedCardIDs.Add(sourceCard.ID);
+            sourceCard.OnAttach(host.ID);
+            ZoneMover.MoveCard(state, sourceCard.ID, CardLocation.Attached);
             return EffectResolutionResult.Resolved;
         }
         #endregion
