@@ -89,6 +89,7 @@ namespace SSR.Logic
             _state.PileObjectRegistry[pileObject.ID] = pileObject;
             _state.ResolutionPile.Push(pileObject.ID);
 
+            _lastActingPlayerID = pileObject.ControllerID;
             _consecutivePasses = 0;
 
             OnEffectObjectPlaced?.Invoke(pileObject.ID);
@@ -288,6 +289,8 @@ namespace SSR.Logic
         {
             if (!card.IsSilenced)
             {
+                var fizzledIndices = new HashSet<int>();
+
                 foreach (var effect in card.Effects)
                 {
                     if (effect is ConspiracyEffectData)
@@ -300,6 +303,15 @@ namespace SSR.Logic
                             OnConspiracyWindowOpened?.Invoke(_conspiracyController);
                             return;
                         }
+                        continue;
+                    }
+                    
+                    // Linked dependency check
+                    if (effect.Dependency == EffectDependency.Linked
+                        && fizzledIndices.Contains(effect.LinkedToPrecedingEffectIndex))
+                    {
+                        fizzledIndices.Add(effect.PrintedEffectIndex);
+                        OnItemResolved?.Invoke(card.ID);  // fires Fizzled signal
                         continue;
                     }
 

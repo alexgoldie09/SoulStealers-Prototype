@@ -1,51 +1,70 @@
-=== ResolutionStackTests Run: 2026-06-21 02:40:11 ===
+=== ResolutionStackTests Run: 2026-06-21 03:25:46 ===
 
 --- AfterResolution_IsPlayed_Cleared ---
+IsPlayed after resolution=False
 
 --- BothPass_PileEmpty_FiresOnPileEmpty ---
+OnPileEmpty fired=True
 
 --- BothPass_ResolvesTopCard ---
+Resolved card ID=3, expected=3
 
 --- Conspiracy_OpensWindow_BeforeEffectsResolve ---
+ConspiracyWindowOpened=True, IsWaitingForConspiracyPut=True
 
 --- ConspiracyPut_PlacesSorceryFaceDown ---
+Sorcery location=SorceryZone, FaceState=FaceDown
 
 --- ConspiracyPut_WrongController_ReturnsFalse ---
+ConspiracyPut(wrong ctrl)=False
 
 --- ConspiracySkip_ResumesResolution ---
+Resolved after skip=True, Location=DiscardPile
 
 --- Dispose_NullsAllEvents ---
 AnyEventFired=False
 
 --- EffectObject_AfterResolution_RemovedFromRegistry ---
-StillRegistered=True
+StillRegistered=False
 
 --- Merge_AttachesToHost ---
+MergeCard location=Attached, IsAttached=True, HostID=3
+Host attachedCount=1
 
 --- Merge_HostAtCapacity_Fizzles ---
+MergeCard location after capacity fizzle=DiscardPile
 
 --- Merge_RitualTargetsOpponentHost_Fizzles ---
+MergeCard location after controller fizzle=DiscardPile
 
 --- Negate_CardOnPile_FiresOnCardNegated ---
 
 --- Negate_CardOnPile_MovesTargetToDiscard ---
+Target location=DiscardPile
 
 --- Negate_TargetNotOnPile_Fizzles ---
+Negate with bad target result=Fizzled
 
 --- Negate_TypeRestriction_WrongType_Fizzles ---
+TypeRestriction mismatch result=Fizzled
 
 --- PassPriority_WrongPlayer_ReturnsFalse ---
+PassPriority(wrong player)=False
 
 --- PlaceCard_OpensPriorityWindow ---
+IsWaitingForPriority=True
 
 --- PlaceCard_SetsIsPlayedAndLocation ---
+IsPlayed=True, Location=ResolutionPile
 
 --- PlaceEffectObject_RegisteredAndOnPile ---
 Registered=True, OnPile=True
 
 --- Prayer_AfterResolution_GoesToIncantationZone ---
+Location=IncantationZone
 
 --- PriorityOrder_OpponentFirstThenActingPlayer ---
+Priority order: [2, 1]
 
 --- RevealSecret_FaceDownSorcery_PlacesOnPile ---
 Placed=True, FaceState=FaceUp, Location=ResolutionPile
@@ -54,22 +73,32 @@ Placed=True, FaceState=FaceUp, Location=ResolutionPile
 RevealSecret(already face-up)=False
 
 --- Ritual_AfterResolution_GoesToIncantationZone ---
+Location=IncantationZone
 
 --- Ritual_IncantationZoneFull_GoesToDiscard ---
+Location=DiscardPile
 
 --- Ritual_MergePlay_GoesToDiscard ---
+Location=DiscardPile
 
 --- Ritual_Resolution_FiresOnCardEnteredField ---
+OnCardEnteredField id=3
 
 --- Secret_AfterResolution_GoesToDiscard ---
+Location=DiscardPile
 
 --- SilencedCard_EffectsFizzle_CardStillResolves ---
+P2 souls=30 (expect 30 - no steal), Resolved=True
 
 --- Spell_AfterResolution_GoesToDiscard ---
+Location=DiscardPile
 
 --- Spell_Resolution_DoesNotFireOnCardEnteredField ---
+OnCardEnteredField fired=False
 
 --- Spirit_AfterResolution_GoesToSpiritZone ---
+Location=SpiritZone
 
 --- TwoCards_LIFO_TopResolvesFirst ---
+Resolve order: [4, 3], b=4, a=3
 

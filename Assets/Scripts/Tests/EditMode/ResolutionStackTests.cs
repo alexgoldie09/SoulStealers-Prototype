@@ -88,6 +88,7 @@ namespace SSR.Tests
         {
             var card = MakeCard(dataID, ownerID, type, CardSuperType.Incantation);
             _state.GetPlayer(ownerID).Hand.Add(card.ID);
+            card.Location = CardLocation.Hand; 
             return card;
         }
 
@@ -96,6 +97,7 @@ namespace SSR.Tests
         {
             var card = MakeCard(dataID, ownerID, type, CardSuperType.Sorcery);
             _state.GetPlayer(ownerID).Hand.Add(card.ID);
+            card.Location = CardLocation.Hand; 
             return card;
         }
 
@@ -261,6 +263,7 @@ namespace SSR.Tests
             _state.GetPlayer(P1).SpiritZone.Clear();
             var card = MakeCard("spirit-b", P1, CardType.Spirit);
             _state.GetPlayer(P1).Hand.Add(card.ID);
+            card.Location = CardLocation.Hand;
             PlayAndBothPass(card.ID, P1, PlayType.NormalPlay);
 
             Log($"Location={card.Location}");
