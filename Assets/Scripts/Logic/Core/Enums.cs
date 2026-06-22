@@ -64,7 +64,8 @@ namespace SSR.Logic
         Discard,
         Indestructible,
         Copy,
-        Counter
+        Counter,
+        Trigger
     }
 
     /// <summary>
@@ -167,6 +168,17 @@ namespace SSR.Logic
         UntilNextTurn,
         WhileOnField,
         WhileSourceCardOnField
+    }
+    
+    /// <summary>
+    /// Defines when a triggered effect fires relative to game phase events.
+    /// </summary>
+    public enum TriggerTiming
+    {
+        BeginningOfTurn,
+        EndOfTurn,
+        OnEnterField,
+        OnCardPlayed
     }
 
     /// <summary>

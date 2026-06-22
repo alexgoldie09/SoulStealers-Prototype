@@ -752,19 +752,16 @@ namespace SSR.Tests
             Assert.AreEqual(2, result);
         }
 
-        // ── Stubs ─────────────────────────────────────────────────
-
         [Test]
-        public void Negate_ReturnsNotImplemented_UntilStackExists()
+        public void Negate_InvalidTarget_Fizzles()
         {
-            //Log("=== Negate_ReturnsNotImplemented_UntilStackExists ===");
             var effect = new NegateEffectData { ControllerID = 1 };
-            effect.TargetIDs.Add(99);
+            effect.TargetIDs.Add(99); // ID 99 is not on the pile
 
             var result = EffectResolver.Resolve(effect, _state);
-            Log($"  result={result}  (expected: NotImplemented)");
+            Log($"  result={result}  (expected: Fizzled — target not on pile)");
 
-            Assert.AreEqual(EffectResolutionResult.NotImplemented, result);
+            Assert.AreEqual(EffectResolutionResult.Fizzled, result);
         }
     }
 }

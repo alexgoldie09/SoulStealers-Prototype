@@ -263,10 +263,19 @@ namespace SSR.Logic
             _state.ActivePlayerID = _turnContext.ActivePlayerID;
             _state.PriorityPlayerID = _state.ActivePlayerID;
             OnTurnStarted?.Invoke(_state.ActivePlayerID);
-            // Waiting for "Beginning of Turn" trigger effects to resolve
-            // before advancing. In this chunk, auto-advance immediately.
-            // The trigger system (later chunk) will intercept here.
-            TransitionTo(GamePhase.ActionPhase);
+            
+            // TriggerSystem calls AdvanceToActionPhase() via OnPileEmpty,
+            // or directly if no triggers were placed on the pile.
+        }
+        
+        /// <summary>
+        /// Called by TriggerSystem after Beginning of Turn triggers drain
+        /// from the pile (or immediately if no triggers fired).
+        /// </summary>
+        public void AdvanceToActionPhase()
+        {
+            if (_state.CurrentPhase == GamePhase.StartOfTurn)
+                TransitionTo(GamePhase.ActionPhase);
         }
 
         /// <summary>

@@ -1,0 +1,33 @@
+=== TriggerSystemTests Run: 2026-06-23 02:09:55 ===
+
+--- BeginningOfTurn_MultipleSpirits_NotPossible ---
+Second spirit add threw InvalidOperationException=True
+
+--- BeginningOfTurn_NoTriggers_AdvancesToActionPhase ---
+Phase after no triggers=ActionPhase
+
+--- BeginningOfTurn_OpponentTrigger_DoesNotFireOnActivePlayerTurn ---
+Pile empty (P2 trigger should not fire on P1's turn)=True
+Phase=ActionPhase
+
+--- BeginningOfTurn_TriggerResolves_AdvancesToActionPhase ---
+Phase after trigger drained=ActionPhase
+
+--- BeginningOfTurn_TriggerResolves_SoulsTransferred ---
+Souls changed: Player 2: 30 → 28
+Souls changed: Player 1: 30 → 32
+P1 souls=32, P2 souls=28
+
+--- BeginningOfTurn_WithTrigger_PileNotEmptyBeforeResolution ---
+PileEmpty=False
+
+--- Dispose_UnsubscribesAllEvents_NoEventsFireAfterDispose ---
+Phase unchanged after dispose=True
+Second dispose threw=False
+
+--- EvaluateEndOfTurnTriggers_IsStub_DoesNotThrow ---
+EvaluateEndOfTurnTriggers threw=False
+
+--- EvaluateEnterFieldTriggers_IsStub_DoesNotThrow ---
+EvaluateEnterFieldTriggers threw=False
+

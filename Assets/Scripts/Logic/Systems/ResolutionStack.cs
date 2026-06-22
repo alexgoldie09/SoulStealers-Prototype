@@ -316,6 +316,10 @@ namespace SSR.Logic
                     }
 
                     var result = EffectResolver.Resolve(effect, _state);
+                    
+                    if (result == EffectResolutionResult.Fizzled || result == EffectResolutionResult.Blocked)
+                        fizzledIndices.Add(effect.PrintedEffectIndex);
+                    
                     if (effect.EffectType == EffectType.Negate
                         && result == EffectResolutionResult.Resolved)
                     {

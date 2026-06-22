@@ -76,6 +76,9 @@ namespace SSR.Logic
                 // Conspiracy window is opened by ResolutionStack before effects run;
                 // if this branch is reached the effect is silenced or skipped.
                 EffectType.Conspiracy => EffectResolutionResult.Resolved,
+                // Meta-type only: TriggerSystem places the inner TriggeredEffect on
+                // the pile, not the TriggerEffectData itself. Rule 700.
+                EffectType.Trigger => EffectResolutionResult.Resolved,
                 EffectType.SpecialPlay => EffectResolutionResult.NotImplemented,
                 EffectType.Copy => EffectResolutionResult.NotImplemented,
                 _ => EffectResolutionResult.NotImplemented

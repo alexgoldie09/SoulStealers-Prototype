@@ -1,14 +1,18 @@
 {
-	"name": "SSR.Visual",
-	"rootNamespace": "SSR.Visual",
-	"references": ["SSR.Logic", "SSR.Data"],
-	"includePlatforms": [],
-	"excludePlatforms": [],
-	"allowUnsafeCode": false,
-	"overrideReferences": false,
-	"precompiledReferences": [],
-	"autoReferenced": true,
-	"defineConstraints": [],
-	"versionDefines": [],
-	"noEngineReferences": false
+    "name": "SSR.Visual",
+    "rootNamespace": "SSR.Visual",
+    "references": [
+        "SSR.Logic",
+        "SSR.Data",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

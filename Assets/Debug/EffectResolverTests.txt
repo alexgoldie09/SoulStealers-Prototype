@@ -1,4 +1,4 @@
-=== EffectResolverTests Run: 2026-06-18 19:32:11 ===
+=== EffectResolverTests Run: 2026-06-23 02:16:32 ===
 
 --- ApplyModifiers_GlobalModifier_AppliesToAllPlayers ---
   Base=4 global -2 → result=2  (expected 2)
@@ -61,8 +61,8 @@
 --- GiveSouls_Inflicted_TargetLosesControllerGains ---
   After: P1=32 P2=28
 
---- Negate_ReturnsNotImplemented_UntilStackExists ---
-  result=NotImplemented  (expected: NotImplemented)
+--- Negate_InvalidTarget_Fizzles ---
+  result=Fizzled  (expected: Fizzled — target not on pile)
 
 --- Recall_Fizzles_WhenSourceZoneEmpty ---
   P2 discard is empty

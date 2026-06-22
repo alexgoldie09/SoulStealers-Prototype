@@ -32,6 +32,8 @@ namespace SSR.Tests
             }
 
             _machine = new RoundStateMachine(_state, new System.Random(42));
+            
+            _machine.OnTurnStarted += _ => _machine.AdvanceToActionPhase();
 
             // Wire up simulation trace — fires automatically for every test.
             _machine.OnRoundStarted       += r   =>
