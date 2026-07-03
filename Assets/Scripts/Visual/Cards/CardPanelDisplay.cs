@@ -1,0 +1,75 @@
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using SSR.Logic;
+
+namespace SSR.Visual
+{
+    /// <summary>
+    /// Controls a single card panel in the UI.
+    /// Attach to the CardPanel prefab root.
+    /// </summary>
+    public class CardPanelDisplay : MonoBehaviour
+    {
+        [SerializeField] private TextMeshProUGUI _nameText;
+        [SerializeField] private TextMeshProUGUI _typeText;
+        [SerializeField] private Image _panelBackground;
+        [SerializeField] private Button _button;
+
+        private static readonly Color ColorSpell = new Color(0.4f, 0.6f, 1f);
+        private static readonly Color ColorSecret = new Color(0.5f, 0.3f, 0.7f);
+        private static readonly Color ColorRitual = new Color(0.3f, 0.7f, 0.4f);
+        private static readonly Color ColorCurse = new Color(0.7f, 0.2f, 0.2f);
+        private static readonly Color ColorPrayer = new Color(0.9f, 0.8f, 0.3f);
+        private static readonly Color ColorSpirit = new Color(0.9f, 0.5f, 0.1f);
+        private static readonly Color ColorFaceDown = new Color(0.25f, 0.25f, 0.3f);
+        private static readonly Color ColorHighlight = new Color(1f, 1f, 0.5f);
+
+        private Color _baseColor;
+        private System.Action _clickAction;
+
+        public void Setup(RuntimeCard card, bool faceDown)
+        {
+            if (faceDown)
+            {
+                _nameText.text = "?";
+                _typeText.text = "?";
+                _baseColor = ColorFaceDown;
+            }
+            else
+            {
+                _nameText.text = card.CurrentName;
+                _typeText.text = card.CurrentType.ToString();
+                _baseColor = GetColorForType(card.CurrentType);
+            }
+            _panelBackground.color = _baseColor;
+            _button.onClick.RemoveAllListeners();
+        }
+
+        public void SetClickAction(System.Action action)
+        {
+            _clickAction = action;
+            _button.onClick.RemoveAllListeners();
+            _button.onClick.AddListener(() => _clickAction?.Invoke());
+        }
+
+        public void SetHighlight(bool highlighted)
+        {
+            _panelBackground.color = highlighted ? ColorHighlight : _baseColor;
+        }
+
+        private static Color GetColorForType(CardType type)
+        {
+            switch (type)
+            {
+                case CardType.Spell:   return ColorSpell;
+                case CardType.Secret:  return ColorSecret;
+                case CardType.Ritual:  return ColorRitual;
+                case CardType.Curse:   return ColorCurse;
+                case CardType.Prayer:  return ColorPrayer;
+                case CardType.Spirit:  return ColorSpirit;
+                default:               return Color.white;
+            }
+        }
+    }
+}
