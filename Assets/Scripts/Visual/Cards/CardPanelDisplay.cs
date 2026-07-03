@@ -12,6 +12,7 @@ namespace SSR.Visual
     public class CardPanelDisplay : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _nameText;
+        [SerializeField] private TextMeshProUGUI _effectsText;
         [SerializeField] private TextMeshProUGUI _typeText;
         [SerializeField] private Image _panelBackground;
         [SerializeField] private Button _button;
@@ -34,11 +35,13 @@ namespace SSR.Visual
             {
                 _nameText.text = "?";
                 _typeText.text = "?";
+                _effectsText.text = "";
                 _baseColor = ColorFaceDown;
             }
             else
             {
                 _nameText.text = card.CurrentName;
+                _effectsText.text = SummariseEffects(card);
                 _typeText.text = card.CurrentType.ToString();
                 _baseColor = GetColorForType(card.CurrentType);
             }
@@ -70,6 +73,50 @@ namespace SSR.Visual
                 case CardType.Spirit:  return ColorSpirit;
                 default:               return Color.white;
             }
+        }
+        
+        private string SummariseEffects(RuntimeCard card)
+        {
+            var sb = new System.Text.StringBuilder();
+            foreach (var e in card.Effects)
+            {
+                switch (e)
+                {
+                    case StealEffectData s:
+                        sb.AppendLine($"Steal {s.BaseValue}");
+                        break;
+                    case BanishEffectData b:
+                        sb.AppendLine($"Banish {b.BaseValue}");
+                        break;
+                    case DefenseEffectData d:
+                        sb.AppendLine($"Defense {d.BaseValue}");
+                        break;
+                    case GiveSoulsEffectData g:
+                        sb.AppendLine(g.IsImposed
+                            ? $"Give {g.BaseValue} Souls"
+                            : $"Gain {g.BaseValue} Souls");
+                        break;
+                    case SilenceEffectData:
+                        sb.AppendLine("Silence");
+                        break;
+                    case NegateEffectData:
+                        sb.AppendLine("Negate");
+                        break;
+                    case ModifierEffectData m:
+                        sb.AppendLine($"{(m.IsPositive ? "+" : "-")}{m.BaseValue} modifier");
+                        break;
+                    case TriggerEffectData t:
+                        sb.AppendLine($"BoT Trigger →[{t.PayloadEffectIndex}]");
+                        break;
+                    case MergeEffectData:
+                        sb.AppendLine("Merge");
+                        break;
+                    case ConspiracyEffectData:
+                        sb.AppendLine("Conspiracy");
+                        break;
+                }
+            }
+            return sb.ToString().TrimEnd();
         }
     }
 }

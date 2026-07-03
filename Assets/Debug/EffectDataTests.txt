@@ -1,4 +1,4 @@
-=== EffectDataTests Run: 2026-06-23 02:09:55 ===
+=== EffectDataTests Run: 2026-07-04 01:54:49 ===
 
 --- BanishEffectData_HasCorrectType ---
   BanishEffectData — type=Banish  value=2  targetPlayer=2

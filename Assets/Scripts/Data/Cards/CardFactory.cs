@@ -20,10 +20,25 @@ namespace SSR.Data
                 spiritRank: data.spiritRank
             );
 
-            foreach (var effect in data.effects)
+            int opponentID = ownerID == 1 ? 2 : 1;
+
+            foreach (var asset in data.effects)
             {
-                if (effect != null)
-                    card.Effects.Add(effect);
+                if (asset == null) continue;
+                var effectData = asset.GetEffectData();
+                effectData.SourceCardID = card.ID;
+                effectData.ControllerID = ownerID;
+
+                // Auto-populate opponent target for soul effects
+                if (effectData is StealEffectData
+                    || effectData is BanishEffectData
+                    || effectData is GiveSoulsEffectData)
+                {
+                    if (effectData.TargetIDs.Count == 0)
+                        effectData.TargetIDs.Add(opponentID);
+                }
+
+                card.Effects.Add(effectData);
             }
 
             return card;

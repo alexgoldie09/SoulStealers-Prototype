@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 731a9e861e5664f9ca5efc99f59c0ec8, type: 3}
+  m_Name: Spirit_Dovos
+  m_EditorClassIdentifier: SSR.Data::SSR.Data.CardData
+  cardDataID: dovos
+  cardName: Dovos, the Runic Guardian
+  cardType: 0
+  cardSuperType: 0
+  spiritRank: 4
+  effects: []

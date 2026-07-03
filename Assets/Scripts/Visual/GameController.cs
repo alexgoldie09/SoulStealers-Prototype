@@ -30,6 +30,8 @@ namespace SSR.Visual
         [SerializeField] private TextMeshProUGUI _p2SoulsText;
         [SerializeField] private TextMeshProUGUI _p1SpiritText;
         [SerializeField] private TextMeshProUGUI _p2SpiritText;
+        [SerializeField] private TextMeshProUGUI _p1DefenseText;
+        [SerializeField] private TextMeshProUGUI _p2DefenseText;
         [SerializeField] private TextMeshProUGUI _pileCountText;
         [SerializeField] private TextMeshProUGUI _logText;
         [SerializeField] private TextMeshProUGUI _statusText;
@@ -147,15 +149,14 @@ namespace SSR.Visual
         private void HandleP2AutoTurn()
         {
             if (!_p2WaitingToEndTurn) return;
+            if (_state.CurrentPhase != GamePhase.ActionPhase) return;
+            if (_state.ActivePlayerID != P2) return;
+    
             _p2ActionTimer -= Time.deltaTime;
             if (_p2ActionTimer <= 0f)
             {
                 _p2WaitingToEndTurn = false;
-                if (_state.CurrentPhase == GamePhase.ActionPhase &&
-                    _state.ActivePlayerID == P2)
-                {
-                    _rsm.EndTurn(P2);
-                }
+                _rsm.EndTurn(P2);
             }
         }
 
@@ -200,13 +201,13 @@ namespace SSR.Visual
             if (_statusText == null) return;
             _statusText.text = _uiState switch
             {
-                UIState.Idle => $"Phase: {_state.CurrentPhase} | Player {_state.ActivePlayerID}'s turn",
-                UIState.CardSelected => "Card selected. Click Play or press Escape to cancel.",
-                UIState.AwaitingTarget => "Click a card on the field to target it. Escape to cancel.",
+                UIState.Idle             => $"Phase: {_state.CurrentPhase} | Player {_state.ActivePlayerID}'s turn",
+                UIState.CardSelected     => "Card selected. Click Play or press Escape to cancel.",
+                UIState.AwaitingTarget   => "Click a card on the field to target it. Escape to cancel.",
                 UIState.WaitingForPriority => "Waiting for priority to pass...",
-                UIState.SpiritSelection => "Choose a spirit for this round.",
-                UIState.P2Turn => "P2 is taking their turn...",
-                _ => ""
+                UIState.SpiritSelection  => "Choose a spirit for this round.",
+                UIState.P2Turn           => "P2 is taking their turn...",
+                _                        => ""
             };
         }
 
@@ -359,7 +360,9 @@ namespace SSR.Visual
             _pendingTargetCardID = -1;
             _pendingTargetEffect = null;
             SetUIState(UIState.WaitingForPriority);
-            AutoPassIfP2();
+            // FIX 1: AutoPassIfP2 removed from here.
+            // It is now triggered exclusively via OnCardPlaced and
+            // OnEffectObjectPlaced subscriptions to avoid double-coroutine issues.
         }
 
         private void CancelPlay()
@@ -489,7 +492,7 @@ namespace SSR.Visual
 
         private System.Collections.IEnumerator AutoPassCoroutine()
         {
-            yield return null;
+            yield return null; // wait one frame for pile state to settle
             while (_stack.IsWaitingForPriority && _stack.PriorityPlayerID == P2)
             {
                 _stack.PassPriority(P2);
@@ -499,12 +502,30 @@ namespace SSR.Visual
             RefreshAllUI();
         }
 
+        // FIX 2: Auto-skip Conspiracy windows.
+        // When a Conspiracy card is played, the stack pauses and opens a window
+        // for the controller to Put a face-down Sorcery. Since there is no UI
+        // for this yet, we auto-skip for all players. Replace this with a proper
+        // UI interaction when Conspiracy is fully implemented.
+        private System.Collections.IEnumerator AutoConspiracySkip(int controllerID)
+        {
+            yield return null; // wait one frame
+            if (_stack.IsWaitingForConspiracyPut)
+            {
+                _stack.ConspiracySkip(controllerID);
+                AppendLog("[Conspiracy] Auto-skipped (no UI yet).");
+            }
+            UpdateButtonStates();
+            RefreshAllUI();
+        }
+
         private void StartP2Turn()
         {
             SetUIState(UIState.P2Turn);
-            _p2WaitingToEndTurn = true;
-            _p2ActionTimer = _p2ActionDelay;
-            AppendLog($"[P2] Taking turn... (auto-ending in {_p2ActionDelay}s)");
+            // Don't start the end-turn timer here anymore.
+            // P2 might have BoT triggers that need to resolve first.
+            // The timer starts in OnActionPhaseStarted instead.
+            AppendLog("[P2] Turn starting...");
         }
 
         // ── Event Subscriptions ───────────────────────────────────
@@ -536,6 +557,15 @@ namespace SSR.Visual
                 AppendLog($"Player {pid} Action Phase (actions={_state.GetPlayer(pid)?.ActionsRemaining})");
                 RefreshAllUI();
                 UpdateButtonStates();
+
+                // Start P2's auto-end-turn timer now that we're actually in ActionPhase.
+                // This is the right place because BoT triggers have all resolved by here.
+                if (pid == P2)
+                {
+                    _p2WaitingToEndTurn = true;
+                    _p2ActionTimer = _p2ActionDelay;
+                    AppendLog($"[P2] Action Phase started — auto-ending in {_p2ActionDelay}s");
+                }
             };
 
             _rsm.OnTurnEnded += pid =>
@@ -556,6 +586,26 @@ namespace SSR.Visual
             _rsm.OnSpiritsRevealed += gs =>
             {
                 AppendLog("Spirits revealed!");
+
+                // Clear previous round's spirits from zones first.
+                // EndRoundCleanup moves spirit IDs to the unavailable pool but does
+                // not clear the SpiritZone objects or update card Locations — we do
+                // that here before assigning the new round's spirits.
+                foreach (var player in gs.Players)
+                {
+                    if (player == null) continue;
+
+                    int oldSpiritID = player.SpiritZone.SpiritID;
+                    if (oldSpiritID != -1)
+                    {
+                        var oldSpirit = gs.GetCard(oldSpiritID);
+                        if (oldSpirit != null)
+                            oldSpirit.Location = CardLocation.SideGame;
+                        player.SpiritZone.Clear();
+                    }
+                }
+
+                // Assign the new spirits for this round.
                 foreach (var player in gs.Players)
                 {
                     if (player == null || player.SelectedSpiritID == -1) continue;
@@ -571,9 +621,13 @@ namespace SSR.Visual
                     BuildSpiritEffects(spirit, player.PlayerID, opponentID);
                     AppendLog($"  P{player.PlayerID} spirit: {spirit.CurrentName} (rank {spirit.SpiritRank})");
                 }
+
                 RefreshSpiritDisplay();
             };
 
+            // FIX 1: P2 auto-pass is triggered exclusively from OnCardPlaced.
+            // CommitPlay no longer calls AutoPassIfP2 directly to avoid
+            // running two simultaneous AutoPassCoroutines.
             _stack.OnCardPlaced += id =>
             {
                 AppendLog($"Card placed on pile: {_state.GetCard(id)?.CurrentName ?? id.ToString()}");
@@ -582,10 +636,34 @@ namespace SSR.Visual
                 AutoPassIfP2();
             };
 
+            // FIX 3: P2 also auto-passes when effect objects (triggered effects)
+            // are placed on the pile. Without this, BoT triggers from spirits like
+            // Goros and Torouk would leave the pile permanently occupied because
+            // OnCardPlaced never fires for PileObjects — only OnEffectObjectPlaced does.
+            _stack.OnEffectObjectPlaced += id =>
+            {
+                AppendLog($"Effect object placed on pile: {id}");
+                UpdateButtonStates();
+                AutoPassIfP2();
+            };
+
+            // FIX 2: Auto-skip Conspiracy windows so the Conspiracy/Negate card
+            // doesn't freeze the game. When the Conspiracy window opens, the
+            // controller would normally choose a face-down Sorcery to Put onto
+            // the field. Since there is no UI for this yet, we skip automatically.
+            _stack.OnConspiracyWindowOpened += controllerID =>
+            {
+                AppendLog($"[Conspiracy] Window opened for Player {controllerID} — auto-skipping (no UI yet).");
+                StartCoroutine(AutoConspiracySkip(controllerID));
+            };
+
             _stack.OnPriorityOpened += pid =>
             {
                 AppendLog($"Priority: Player {pid}");
                 UpdateButtonStates();
+                // If it's P2's priority, auto-pass immediately
+                if (pid == P2)
+                    AutoPassIfP2();
             };
 
             _stack.OnItemResolved += id =>
@@ -639,6 +717,7 @@ namespace SSR.Visual
             RefreshHandUI();
             RefreshFieldUI();
             RefreshSoulUI();
+            RefreshDefenseUI();
             RefreshSpiritDisplay();
             UpdatePileCountUI();
         }
@@ -649,6 +728,16 @@ namespace SSR.Visual
                 _p1SoulsText.text = $"P1 Souls: {_state.GetPlayer(P1)?.Souls ?? 0}";
             if (_p2SoulsText != null)
                 _p2SoulsText.text = $"P2 Souls: {_state.GetPlayer(P2)?.Souls ?? 0}";
+        }
+
+        private void RefreshDefenseUI()
+        {
+            int p1Def = EffectResolver.CalculateTotalDefense(_state, P1);
+            int p2Def = EffectResolver.CalculateTotalDefense(_state, P2);
+            if (_p1DefenseText != null)
+                _p1DefenseText.text = $"P1 Defense: {p1Def}";
+            if (_p2DefenseText != null)
+                _p2DefenseText.text = $"P2 Defense: {p2Def}";
         }
 
         private void RefreshSpiritDisplay()
@@ -700,7 +789,8 @@ namespace SSR.Visual
                         TypeRestriction = null,
                         ControllerID = ownerID,
                         SourceCardID = spirit.ID,
-                        PrintedEffectIndex = 0
+                        PrintedEffectIndex = 1,
+                        Dependency = EffectDependency.Unlinked
                     };
 
                     var banish = new BanishEffectData
@@ -709,21 +799,23 @@ namespace SSR.Visual
                         ValueType = NumericValueType.Symbolic,
                         ControllerID = ownerID,
                         SourceCardID = spirit.ID,
-                        PrintedEffectIndex = 1,
+                        PrintedEffectIndex = 2,
                         Dependency = EffectDependency.Linked,
-                        LinkedToPrecedingEffectIndex = 0
+                        LinkedToPrecedingEffectIndex = 1
                     };
                     banish.TargetIDs.Add(opponentID);
 
                     var triggerGoros = new TriggerEffectData
                     {
                         Timing = TriggerTiming.BeginningOfTurn,
-                        TriggeredEffect = destroy,
+                        PayloadEffectIndex = 1,
                         OnlyOnOwnerTurn = true,
                         ControllerID = ownerID,
                         SourceCardID = spirit.ID
                     };
-                    spirit.Effects.Add(triggerGoros);
+                    spirit.Effects.Add(triggerGoros); // [0]
+                    spirit.Effects.Add(destroy);      // [1]
+                    spirit.Effects.Add(banish);        // [2]
                     break;
                 }
 
@@ -737,15 +829,17 @@ namespace SSR.Visual
                         SourceCardID = spirit.ID
                     };
                     recall.TargetIDs.Add(ownerID);
+
                     var triggerTorouk = new TriggerEffectData
                     {
                         Timing = TriggerTiming.BeginningOfTurn,
-                        TriggeredEffect = recall,
+                        PayloadEffectIndex = 1,
                         OnlyOnOwnerTurn = true,
                         ControllerID = ownerID,
                         SourceCardID = spirit.ID
                     };
-                    spirit.Effects.Add(triggerTorouk);
+                    spirit.Effects.Add(triggerTorouk); // [0]
+                    spirit.Effects.Add(recall);         // [1]
                     break;
                 }
 
@@ -758,20 +852,34 @@ namespace SSR.Visual
                         ControllerID = ownerID,
                         SourceCardID = spirit.ID
                     };
+
                     var triggerTrish = new TriggerEffectData
                     {
                         Timing = TriggerTiming.BeginningOfTurn,
-                        TriggeredEffect = silence,
+                        PayloadEffectIndex = 1,
                         OnlyOnOwnerTurn = true,
                         ControllerID = ownerID,
                         SourceCardID = spirit.ID
                     };
-                    spirit.Effects.Add(triggerTrish);
+                    spirit.Effects.Add(triggerTrish); // [0]
+                    spirit.Effects.Add(silence);       // [1]
                     break;
                 }
 
-                case 11: // Molok — An opponent of your choice gives you 2 souls.
+                case 11: // Molok — stealing spells +1, BoT: opponent gives you 2 souls.
                 {
+                    var mod = new ModifierEffectData
+                    {
+                        BaseValue = 1,
+                        IsPositive = true,
+                        ControllerOnly = true,
+                        ValueType = NumericValueType.Symbolic,
+                        ControllerID = ownerID,
+                        SourceCardID = spirit.ID,
+                        SourceCardTypeRestriction = CardType.Spell
+                    };
+                    mod.ModifiedEffectTypes.Add(EffectType.Steal);
+
                     var giveSouls = new GiveSoulsEffectData
                     {
                         BaseValue = 2,
@@ -781,15 +889,18 @@ namespace SSR.Visual
                         SourceCardID = spirit.ID
                     };
                     giveSouls.TargetIDs.Add(opponentID);
+
                     var triggerMolok = new TriggerEffectData
                     {
                         Timing = TriggerTiming.BeginningOfTurn,
-                        TriggeredEffect = giveSouls,
+                        PayloadEffectIndex = 2,
                         OnlyOnOwnerTurn = true,
                         ControllerID = ownerID,
                         SourceCardID = spirit.ID
                     };
-                    spirit.Effects.Add(triggerMolok);
+                    spirit.Effects.Add(mod);          // [0]
+                    spirit.Effects.Add(triggerMolok); // [1]
+                    spirit.Effects.Add(giveSouls);    // [2]
                     break;
                 }
 

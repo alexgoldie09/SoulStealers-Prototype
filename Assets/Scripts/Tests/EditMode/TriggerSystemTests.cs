@@ -103,15 +103,17 @@ namespace SSR.Tests
             };
             payload.TargetIDs.Add(targetID);
 
+            // Trigger at [0], payload at [1]
             var trigger = new TriggerEffectData
             {
                 Timing = TriggerTiming.BeginningOfTurn,
-                TriggeredEffect = payload,
+                PayloadEffectIndex = 1,
                 OnlyOnOwnerTurn = true,
                 ControllerID = ownerID,
                 SourceCardID = spirit.ID
             };
-            spirit.Effects.Add(trigger);
+            spirit.Effects.Add(trigger); // [0]
+            spirit.Effects.Add(payload); // [1]
         }
 
         /// <summary>

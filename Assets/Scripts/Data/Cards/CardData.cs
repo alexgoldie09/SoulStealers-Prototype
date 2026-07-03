@@ -12,8 +12,7 @@ namespace SSR.Data
         public CardType cardType;
         public CardSuperType cardSuperType;
         public int spiritRank;
-
-        [SerializeReference]
-        public List<EffectData> effects = new List<EffectData>();
+        
+        public List<EffectDataAsset> effects = new List<EffectDataAsset>();
     }
 }

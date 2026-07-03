@@ -146,18 +146,25 @@ namespace SSR.Logic
                 if (!(effect is TriggerEffectData trigger)) continue;
                 if (trigger.Timing != TriggerTiming.BeginningOfTurn) continue;
                 if (trigger.Status == EffectStatus.Silenced) continue;
-                if (trigger.TriggeredEffect == null) continue;
 
                 // "Only on owner's turn" gate.
                 if (trigger.OnlyOnOwnerTurn && trigger.ControllerID != activePlayerID)
                     continue;
+                
+                // -1 means stub - skip silently.
+                if (trigger.PayloadEffectIndex < 0
+                    || trigger.PayloadEffectIndex >= card.Effects.Count)
+                    continue;
+
+                var payload = card.Effects[trigger.PayloadEffectIndex];
+                if (payload == null) continue;
 
                 var pileObj = new PileObject
                 {
                     ID = IDFactory.GetUniqueID(),
                     SourceCardID = trigger.SourceCardID,
                     ControllerID = trigger.ControllerID,
-                    Effect = trigger.TriggeredEffect
+                    Effect = payload
                 };
                 _stack.PlaceEffectObject(pileObj);
                 anyPlaced = true;
