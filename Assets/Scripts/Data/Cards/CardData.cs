@@ -4,7 +4,7 @@ using SSR.Logic;
 
 namespace SSR.Data
 {
-    [CreateAssetMenu(fileName = "NewCard", menuName = "SSR/Card Data")]
+    [CreateAssetMenu(fileName = "Card_", menuName = "SSR/Card Data")]
     public class CardData : ScriptableObject
     {
         public string cardDataID;

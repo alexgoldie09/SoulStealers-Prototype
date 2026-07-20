@@ -1,0 +1,41 @@
+=== WinLossCheckerTests Run: 2026-07-21 01:54:10 ===
+
+--- AfterDispose_SoulsChange_NoGameOver ---
+result=null
+
+--- Concede_P1Concedes_P2Wins ---
+ResultType=P2Wins Reason=Concede WinnerID=2
+
+--- ForceLoss_P1_P2Wins ---
+ResultType=P2Wins Reason=ForceLoss WinnerID=2
+
+--- ForceWin_P1_P1Wins ---
+ResultType=P1Wins Reason=ForceWin WinnerID=1
+
+--- Idempotent_FiresOnlyOnce ---
+fireCount=1
+
+--- SimultaneousZero_BothAtZero_Draw ---
+ResultType=Draw Reason=SimultaneousLoss
+
+--- SoulsAboveZero_NoGameOver ---
+result=null P1Souls=20
+
+--- SoulsReachZero_P1AtZero_P2Wins ---
+ResultType=P2Wins Reason=SoulsReachedZero WinnerID=2
+
+--- SoulsReachZero_P2AtZero_P1Wins ---
+ResultType=P1Wins Reason=SoulsReachedZero WinnerID=1
+
+--- TiebreakByLastRoundSpiritRank_P1HigherLastRank_P1Wins ---
+ResultType=P1Wins WinnerID=1
+
+--- TiebreakBySouls_P1MoreSouls_P1Wins ---
+ResultType=P1Wins WinnerID=1
+
+--- TiebreakBySpiritRank_P2HigherRank_P2Wins ---
+ResultType=P2Wins WinnerID=2
+
+--- TimeExpired_EqualSoulsAndRanks_Draw ---
+ResultType=Draw Reason=TimeExpired
+

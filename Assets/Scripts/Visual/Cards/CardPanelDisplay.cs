@@ -14,6 +14,7 @@ namespace SSR.Visual
         [SerializeField] private TextMeshProUGUI _nameText;
         [SerializeField] private TextMeshProUGUI _effectsText;
         [SerializeField] private TextMeshProUGUI _typeText;
+        [SerializeField] private TextMeshProUGUI _spiritRankText;
         [SerializeField] private Image _panelBackground;
         [SerializeField] private Button _button;
 
@@ -36,6 +37,8 @@ namespace SSR.Visual
                 _nameText.text = "?";
                 _typeText.text = "?";
                 _effectsText.text = "";
+                if (_spiritRankText != null)
+                    _spiritRankText.text = "";
                 _baseColor = ColorFaceDown;
             }
             else
@@ -44,6 +47,8 @@ namespace SSR.Visual
                 _effectsText.text = SummariseEffects(card);
                 _typeText.text = card.CurrentType.ToString();
                 _baseColor = GetColorForType(card.CurrentType);
+                if (_spiritRankText != null)
+                    _spiritRankText.text = card.CurrentType == CardType.Spirit ? $"Rank {card.SpiritRank}" : "";
             }
             _panelBackground.color = _baseColor;
             _button.onClick.RemoveAllListeners();
@@ -103,8 +108,17 @@ namespace SSR.Visual
                         sb.AppendLine("Negate");
                         break;
                     case ModifierEffectData m:
-                        sb.AppendLine($"{(m.IsPositive ? "+" : "-")}{m.BaseValue} modifier");
-                        break;
+                        {
+                            var targets = new System.Text.StringBuilder();
+                            foreach (var et in m.ModifiedEffectTypes)
+                            {
+                                if (targets.Length > 0) targets.Append("/");
+                                targets.Append(et.ToString());
+                            }
+                            string targetStr = targets.Length > 0 ? targets.ToString() : "effects";
+                            sb.AppendLine($"{(m.IsPositive ? "+" : "-")}{m.BaseValue} to {targetStr}");
+                            break;
+                        }
                     case TriggerEffectData t:
                         sb.AppendLine($"BoT Trigger →[{t.PayloadEffectIndex}]");
                         break;

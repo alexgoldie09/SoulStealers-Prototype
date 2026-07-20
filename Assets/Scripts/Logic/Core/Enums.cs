@@ -210,4 +210,27 @@ namespace SSR.Logic
         Blocked,
         NotImplemented
     }
+    
+    /// <summary>
+    /// Defines the possible results of a game, which can be used to determine the winner and loser of a match.
+    /// </summary>
+    public enum GameResultType
+    {
+        P1Wins,
+        P2Wins,
+        Draw
+    }
+
+    /// <summary>
+    /// Defines the reasons why a game may end, which can be used to determine the outcome and any relevant game state changes.
+    /// </summary>
+    public enum GameOverReason
+    {
+        SoulsReachedZero,
+        Concede,
+        ForceWin,
+        ForceLoss,
+        TimeExpired,
+        SimultaneousLoss
+    }
 }

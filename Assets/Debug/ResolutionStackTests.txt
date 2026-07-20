@@ -1,4 +1,4 @@
-=== ResolutionStackTests Run: 2026-07-04 01:54:49 ===
+=== ResolutionStackTests Run: 2026-07-21 01:54:10 ===
 
 --- AfterResolution_IsPlayed_Cleared ---
 IsPlayed after resolution=False

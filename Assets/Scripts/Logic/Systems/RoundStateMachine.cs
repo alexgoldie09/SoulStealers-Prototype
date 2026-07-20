@@ -67,7 +67,11 @@ namespace SSR.Logic
         public event Action OnPoolCycleReset;
 
         // Fired when a round ends.
-        public event Action<int> OnRoundEnded; // arg: round number
+        public event Action<int> OnRoundEnded;
+        
+        // Fired before end-of-round cleanup (SpiritPoolSystem.EndRoundCleanup).
+        // Subscribe here to snapshot round state (e.g. spirit ranks for tiebreak). Rule 506.
+        public event Action OnBeforeEndOfRound;
 
         // ── Public State ──────────────────────────────────────────
         public GamePhase CurrentPhase => _state.CurrentPhase;
@@ -331,6 +335,7 @@ namespace SSR.Logic
         /// </summary>
         private void EnterEndOfRound()
         {
+            OnBeforeEndOfRound?.Invoke();
             SpiritPoolSystem.EndRoundCleanup(_state);
             OnRoundEnded?.Invoke(_state.RoundNumber);
             TransitionTo(GamePhase.BeginRound);
